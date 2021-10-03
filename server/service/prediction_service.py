@@ -10,7 +10,7 @@ def create_dictionary():
     - 10.03
     """
     result = {}
-    with open('./itrc_snp_hypertension_sm.csv', newline='') as reference_file:
+    with open('./dataset/itrc_snp_hypertension_sm.csv', newline='') as reference_file:
         reader = csv.DictReader(reference_file)
         # column names in itrc_snp_hypertension_sm.csv
         # SNP	CHR	PHENOTYPE	BETA.OR.	P.VAL	BP	minor	major
@@ -52,11 +52,3 @@ def evaluate_testcase(input_file, reference):
                     geno2['min_p'] = min(geno2['min_p'], p_val)
     print('process done.')
     return geno0, geno1, geno2
-
-
-if __name__ == "__main__":
-    ref = create_dictionary()
-    g0, g1, g2 = evaluate_testcase('./test_set1.csv', ref)
-    print(g0)
-    print(g1)
-    print(g2)
