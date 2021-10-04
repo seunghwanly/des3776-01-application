@@ -22,6 +22,16 @@ class Hypertensions(Resource):
             args = parser.parse_args()
             # get result
             g0, g1, g2 = evaluate_testcase(f"./dataset/test_set{args['index']}.csv", self.ref)
-            return {'result': {'geno0': g0, 'geno1': g1, 'geno2': g2}}
+            # make it into format
+            res = {}
+            res['result'] = []
+            return_list = [g0, g1, g2]
+
+            for index in range(3):
+                name_dict = {'name': f'geno{(index + 1)}'}
+                name_dict.update(return_list[index])
+                res['result'].append(name_dict)
+                
+            return res
         except Exception as e:
             return {'result': str(e)}, 400
