@@ -21,11 +21,10 @@ Reference를 list로 만들어서 비교를 하기에는 많은 시간이 걸릴
 
 ```
 app
-├── api
+├── resource
 │   └── api.py
 ├── service
 │   └── prediction_service.py
-├── dataset
 └── app.py
 ```
 
@@ -46,6 +45,14 @@ app
 Hypertensions 라는 class를 구현하였는데 코드는 아래와 같다.
 
 ``` python
+from flask import current_app, g
+from flask_pymongo import PyMongo
+from flask_restful import Resource, reqparse
+import werkzeug
+
+from service.prediction_service import HypertensionService
+
+
 class Hypertensions(Resource):
     """methods with Hypertensions
 
@@ -56,39 +63,52 @@ class Hypertensions(Resource):
         which is based on itrc_snp_hypertension_sm
     """
     def __init__(self):
-        ref = create_dictionary()
-        self.ref = ref
+        db = g._database = PyMongo(current_app).db
+        self.service = HypertensionService(db)
 
-    def get(self):
+
+    def post(self):
         try:
-            # parse request
+            # create parser to parse request
             parser = reqparse.RequestParser()
-            parser.add_argument('index', required=True, type=int, help='place index of the testcase')
+            parser.add_argument('file',
+                                type=werkzeug.datastructures.FileStorage,
+                                location='files')
             args = parser.parse_args()
-            # get result
-            g0, g1, g2 = evaluate_testcase(f"./dataset/test_set{args['index']}.csv", self.ref)
-            return {'result': {'geno0': g0, 'geno1': g1, 'geno2': g2}}
+
+            file = args.get('file')
+
+            g0, g1, g2 = self.service.evaluate_testcase(file)
+
+            # make it into format
+            res = {}
+            res['result'] = []
+            return_list = [g0, g1, g2]
+
+            for index in range(3):
+                name_dict = {'name': f'geno{(index + 1)}'}
+                name_dict.update(return_list[index])
+                res['result'].append(name_dict)
+
+            return res, 200
+
         except Exception as e:
             return {'result': str(e)}, 400
 ```
 
 직접적으로 Api layer에서 연산을 다루지 않고 service layer로의 호출만이 이루어진다. 아직은 따로 함수들을 나누지는 않았지만 추후 업데이트 예정이다.
 
-`Hypertensions` 클래스 내 method는 현재 하나로 이루어져있다. 클래스 내 생성자에서는 Hypertensions내에서 다룰 reference를 `ref`로 property를 하나 생성해 사용한다. ref 를 생성할 때도 service layer에서 호출해 사용한다.
+`Hypertensions` 클래스 내 method는 현재 하나로 이루어져있다. 사용자로부터 입력받을 file을 parsing해서 관련 데이터 값으 service layer로 넘겨준다.
 
-### GET 
-생성된 ref를 가지고 사용자로부터 GET 요청이 오게되면 입력된 parameter를 확인한다. 만약에 `index` 라는 parameter가 입력되지 않았다면 status code 400과 함께 에러를 반환한다. 
+### POST 
+사용자로부터 POST 요청이 오게되면 'file'이란 `key`값을 가지고 있는 multipart/form-data를 확인한다. 그리고 관련 작업은 service 레이어에서 이루어진다. 만약에 `file` 이라는 data가 첨부되지 않았다면 status code 400과 함께 에러를 반환한다.
 
-현재 주어진 테스트 케이스는 3개이므로 입력된 index에 따라서 결과값을 반환하게 된다. 
-
-#### TODO
-index의 번호가 주어진 범위를 벗어나게되면 에러를 반환해주어야한다. 이 점은 현재 애플리케이션에서 1-3까지만 요청을 하는 것으로 처리가 된다.
 
 #### Result
 위와 같이 작성한 클래스로 요청을 아래와 같이 보낼 수 있다.
 
 ``` bash
-localhost:5000/hypertensions?index=1
+localhost:3000/hypertensions
 ```
 
 이와 같이 보냈을 경우, 아래와 같은 결과 값을 서버로 부터 얻을 수 있다.
@@ -114,3 +134,47 @@ localhost:5000/hypertensions?index=1
     }
 }
 ```
+
+# Client
+Client는 Android로 구성하였다. 요구사항에 맞게 사용자는 원하는 파일을 3개 중에 하나를 선택할 수 있으며 서버로부터 결과값을 받아서 화면에 출력해야한다. 비동기 작업이후 완료된 결과를 출력하기 위해서 데이터를 Binding 해서 RecyclerView에 담아주었다.
+
+그전에 출력 해줄 데이터에 대해서 모델을 제작하였다. 제작한 모델은 아래와 같다.
+``` kotlin
+data class Hypertension(
+    val name: String,
+    val count: Int,
+    val maxP: Double,
+    val minP: Double
+)
+```
+
+그리고 구현한 data class를 기반으로 Observable한 데이터를 만들어주었다. 왜냐하면 뷰에서 바로 모델을 참조하는 것이 아닌 MVVM 구조로 앱을 설계했기 때문이다. 이로써 원하는 데이터의 상태관리를 효율적으로 해줄 수 있다.
+
+``` kotlin
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+
+class HypertensionViewModel: ViewModel() {
+    var observableData: MutableLiveData<ArrayList<Hypertension>> = MutableLiveData<ArrayList<Hypertension>>()
+
+    init {
+        var hypertensionData = ArrayList<Hypertension>()
+        hypertensionData.add(Hypertension("none", 0, 0.0, 0.0))
+        hypertensionData.add(Hypertension("none", 0, 0.0, 0.0))
+        hypertensionData.add(Hypertension("none", 0, 0.0, 0.0))
+        observableData.postValue(hypertensionData)
+    }
+}
+```
+
+총 3개의 데이터를 출력해줄 것이므로 임시 데이터를 넣어주었다. 수정가능한 List를 만들어 주기위해서 data는 MutableLiveData 타입으로 구현하였다.
+
+이제 View에서 출력을 해주면 된다. xml에서 viewModel로 사용할 데이터를 `.kt`와 Data Binding을 해주고 이를 listen 해줄 Observer를 만들어주었다. 
+
+[자세한 내용은 소스코드 참고](링크첨부)
+
+
+# TODO
+- `/resource/api.py`
+
+    index의 번호가 주어진 범위를 벗어나게되면 에러를 반환해주어야한다. 이 점은 현재 애플리케이션에서 1-3까지만 요청을 하는 것으로 처리가 된다.
