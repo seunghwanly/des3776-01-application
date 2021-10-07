@@ -1,5 +1,10 @@
+from flask import current_app, g
+from flask_pymongo import PyMongo
 from flask_restful import Resource, reqparse
-from service.prediction_service import create_dictionary, evaluate_testcase
+import werkzeug
+
+from service.prediction_service import HypertensionService
+
 
 class Hypertensions(Resource):
     """methods with Hypertensions
@@ -11,17 +16,23 @@ class Hypertensions(Resource):
         which is based on itrc_snp_hypertension_sm
     """
     def __init__(self):
-        ref = create_dictionary()
-        self.ref = ref
+        db = g._database = PyMongo(current_app).db
+        self.service = HypertensionService(db)
 
-    def get(self):
+
+    def post(self):
         try:
-            # parse request
+            # create parser to parse request
             parser = reqparse.RequestParser()
-            parser.add_argument('index', required=True, type=int, help='place index of the testcase')
+            parser.add_argument('file',
+                                type=werkzeug.datastructures.FileStorage,
+                                location='files')
             args = parser.parse_args()
-            # get result
-            g0, g1, g2 = evaluate_testcase(f"./dataset/test_set{args['index']}.csv", self.ref)
+
+            file = args.get('file')
+
+            g0, g1, g2 = self.service.evaluate_testcase(file)
+
             # make it into format
             res = {}
             res['result'] = []
@@ -31,7 +42,8 @@ class Hypertensions(Resource):
                 name_dict = {'name': f'geno{(index + 1)}'}
                 name_dict.update(return_list[index])
                 res['result'].append(name_dict)
-                
-            return res
+
+            return res, 200
+
         except Exception as e:
             return {'result': str(e)}, 400
