@@ -3,7 +3,7 @@ from flask_pymongo import PyMongo
 from flask_restful import Resource, reqparse
 import werkzeug
 
-from service.prediction_service import HypertensionService
+from services.prediction_service import HypertensionService
 
 
 class Hypertensions(Resource):
@@ -30,7 +30,7 @@ class Hypertensions(Resource):
             args = parser.parse_args()
 
             file = args.get('file')
-
+            
             g0, g1, g2 = self.service.evaluate_testcase(file)
 
             # make it into format

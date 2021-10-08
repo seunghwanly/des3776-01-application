@@ -1,4 +1,4 @@
-import csv, sys
+import sys
 
 
 class HypertensionService:
@@ -32,9 +32,11 @@ class HypertensionService:
         geno0 = {'cnt': 0, 'max_p': -1.0, 'min_p': float(sys.maxsize)}
         geno1 = {'cnt': 0, 'max_p': -1.0, 'min_p': float(sys.maxsize)}
         geno2 = {'cnt': 0, 'max_p': -1.0, 'min_p': float(sys.maxsize)}
-
+        
         test_data = input_file.read()
         test_data = str(test_data)[16:-1].split('\\n')
+        print(test_data[0])
+        print(f'len of ref: {len(self.ref)}')
 
         # index equals 0:CHR, 1:SNP, 2:geno
         for row in test_data:
