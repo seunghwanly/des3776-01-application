@@ -173,8 +173,131 @@ class HypertensionViewModel: ViewModel() {
 
 [자세한 내용은 소스코드 참고](링크첨부)
 
+## File upload
+Android는 다운로드폴더에서 직접적으로 파일을 업로드하는 것을 허용하지 않는다. 따라서 내장폴더에 있는 파일을 캐시폴더로 옮겨 주어야한다. 아래와 같이 데이터를 복사해주었다.
+
+``` kotlin
+// convert to inputStream
+val inputStream = contentResolver.openInputStream(selectedFileURI!!)!!
+val newlyWrittenFile = File(cacheDir.absolutePath + "/" + selectedFileURI!!.port)
+
+// write new file with outputStream
+val outputStream = FileOutputStream(newlyWrittenFile)
+val buf = ByteArray(1024)
+var len: Int
+while (true) {
+    len = inputStream.read(buf, 0, 1024)
+    if (len > 0) {
+        outputStream.write(buf, 0, len)
+    } else break
+}
+
+outputStream.close()
+```
+
+그리고 File로 통신을 하기위해서 Retrofit2를 이용한 API Interface도 구현해주었다. 코드는 다음과 같다.
+
+``` kotlin
+interface HyperTensionAPI {
+    @Multipart
+    @POST("hypertensions")
+    fun getResultFromFile(
+        @Part body: MultipartBody.Part,
+    ): Call<JsonObject>
+}
+```
+Retrofit2와 Coroutine을 활용하면 동기 및 비동기작업을 원활하게 진행할 수 있다고 한다. 이는 추후에 추가될 예정이다.
+
+모든 작업이 끝난 후 Retrofit2 instance를 생성해서 위에서 만든 interface에 해당하는 method를 넣어준다. 그 후 `enque`를 이용해서 비동기 방법으로 요청을 해 Main Thread의 부담을 줄여준다. 코드는 아래와 같다.
+
+``` kotlin
+fun getEvaluationOfSelectedTestCase(view: View) {
+        /// select file first
+        val selectFileIntent = Intent().setType("*/*").setAction(Intent.ACTION_GET_CONTENT)
+        selectFileIntent.addCategory(Intent.CATEGORY_OPENABLE)
+//        selectFileIntent.type = "text/comma-separated-values"
+        selectFileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        // execute
+        intentLauncher.launch(selectFileIntent)
+
+        if (selectedFileURI != null) {
+            // convert to inputStream
+            val inputStream = contentResolver.openInputStream(selectedFileURI!!)!!
+            val newlyWrittenFile =
+                File(cacheDir.absolutePath + "/" + selectedFileURI!!.port)
+
+            // write new file with outputStream
+            val outputStream = FileOutputStream(newlyWrittenFile)
+            val buf = ByteArray(1024)
+            var len: Int
+            while (true) {
+                len = inputStream.read(buf, 0, 1024)
+                if (len > 0) {
+                    outputStream.write(buf, 0, len)
+                } else break
+            }
+
+            outputStream.close()
+
+            Log.d("fileNEW", "wrote everything")
+
+            val requestFile = RequestBody.create(
+                MediaType.parse(contentResolver.getType(selectedFileURI!!)!!),
+                newlyWrittenFile
+            )
+            val requestBody =
+                MultipartBody.Part.createFormData("file", newlyWrittenFile.name, requestFile)
+
+            // execute the request
+            // use Retrofit to create request
+            val baseURL = "http://10.0.2.2:3000/"
+            val retrofit =
+                Retrofit.Builder().baseUrl(baseURL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+            val api = retrofit.create(HyperTensionAPI::class.java)
+            val call = api.getResultFromFile(requestBody)
+
+            /// use in asychronous way
+            call.enqueue(object : Callback<JsonObject> {
+                override fun onResponse(
+                    call: Call<JsonObject>,
+                    response: Response<JsonObject>
+                ) {
+                    Log.d("onCall", call.isExecuted.toString() + call.toString())
+                    val results = response.body()?.getAsJsonArray("result")
+
+                    if (results != null) {
+                        val parsedHypertensions: MutableList<Hypertension> = mutableListOf()
+                        for (res in results) {
+                            val resObject = res.asJsonObject
+                            val name = resObject.get("name").asString
+                            val count = resObject.get("cnt").asInt
+                            val maxP = resObject.get("max_p").asDouble
+                            val minP = resObject.get("min_p").asDouble
+                            // save to list
+                            val item = Hypertension(name, count, maxP, minP)
+                            parsedHypertensions.add(item)
+                        }
+                        Log.d("getEvaluationOfSelectedTestCase", parsedHypertensions.toString())
+                        viewmodel.observableData.postValue(parsedHypertensions as ArrayList<Hypertension>?)
+                    }
+                }
+
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                    Log.d("onRequest", "failed $t")
+                }
+            })
+        }
+    }
+```
+
 
 # TODO
 - `/resource/api.py`
 
     index의 번호가 주어진 범위를 벗어나게되면 에러를 반환해주어야한다. 이 점은 현재 애플리케이션에서 1-3까지만 요청을 하는 것으로 처리가 된다.
+
+- client
+    
+    요청이 비동기 방식으로 이루어지기 때문에 사용자에게 보여질 화면이 필요하다.
