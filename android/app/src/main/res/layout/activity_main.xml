@@ -17,6 +17,12 @@
         android:gravity="center"
         tools:context=".MainActivity">
 
+        <ImageView
+            android:id="@+id/dna_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/geno_recyclerview"
             android:layout_width="match_parent"

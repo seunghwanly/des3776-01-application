@@ -1,0 +1,7 @@
+{
+    "python.analysis.extraPaths": [
+        "/usr/local/bin/",
+        "/usr/local/lib/",
+        "./server/resource"
+    ]
+}

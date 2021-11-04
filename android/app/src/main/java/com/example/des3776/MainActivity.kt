@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.des3776.databinding.ActivityMainBinding
 import com.google.gson.JsonObject
 import okhttp3.MediaType
@@ -26,7 +28,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 
 
@@ -71,6 +72,11 @@ class MainActivity : AppCompatActivity() {
 
         val reqBtn: Button = findViewById(R.id.req_btn)
         reqBtn.text = "Select File and Send"
+
+        /// imageview with animated gif
+        val imageView: ImageView = findViewById(R.id.dna_imageview)
+        Glide.with(this).load(R.drawable.dna).into(imageView)
+
     }
 
     private fun setRecyclerView() {
