@@ -25,17 +25,6 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/geno_recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/req_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{activity::getEvaluationOfSelectedTestCase}"/>
-
         <club.cred.synth.views.SynthButton
             android:id="@+id/send_req_btn"
             android:layout_width="wrap_content"
@@ -49,6 +38,7 @@
             app:neuBorderStartColor="@color/teal_200"
             app:neuBorderEndColor="@color/purple_500"
             app:neuPlatformColor="@color/synth_color"
+            android:onClick="@{activity::getEvaluationOfSelectedTestCase}"
             />
     </LinearLayout>
 </layout>

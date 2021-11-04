@@ -3,13 +3,14 @@ package com.example.des3776
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.databinding.ObservableArrayList
+import java.io.Serializable
 
 data class Hypertension(
     val name: String,
     val count: Int,
     val maxP: Double,
     val minP: Double
-)
+): Serializable
 //    : BaseObservable() {
 //
 //    @get:Bindable
