@@ -15,7 +15,9 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        android:background="@color/background"
+        android:clipChildren="false">
 
         <ImageView
             android:id="@+id/dna_imageview"
@@ -34,5 +36,19 @@
             android:layout_height="wrap_content"
             android:onClick="@{activity::getEvaluationOfSelectedTestCase}"/>
 
+        <club.cred.synth.views.SynthButton
+            android:id="@+id/send_req_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/copper_text_color"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="8dp"
+            android:gravity="center"
+            android:textFontWeight="800"
+            app:neuButtonType="elevated_soft"
+            app:neuBorderStartColor="@color/teal_200"
+            app:neuBorderEndColor="@color/purple_500"
+            app:neuPlatformColor="@color/synth_color"
+            />
     </LinearLayout>
 </layout>

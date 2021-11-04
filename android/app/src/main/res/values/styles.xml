@@ -1,11 +1,52 @@
 <resources>
-
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/synth_color</item>
+        <item name="colorPrimaryDark">@color/synth_color</item>
+        <item name="android:statusBarColor">@color/synth_color</item>
+        <item name="android:navigationBarColor">@color/synth_color</item>
+        <item name="android:windowBackground">@color/synth_color</item>
+        <item name="neuFlatButtonAppearance">@style/elevatedFlat_blueButton</item>
+        <item name="dividerAppearance">@style/neuWhiteDivider</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="elevatedFlat_blueButton">
+        <item name="neuButtonStartColor">#FF426bb6</item>
+        <item name="neuButtonEndColor">#FF26458c</item>
+        <item name="neuButtonBorder1StartColor">#FF5679c4</item>
+        <item name="neuButtonBorder1EndColor">#FF1b2d5b</item>
+        <item name="neuButtonBorder2StartColor">#FF366BD1</item>
+        <item name="neuButtonBorder2EndColor">#FF18263E</item>
+        <item name="neuButtonPressedDarkShadowColor">#80000000</item>
+    </style>
+
+<!--    <style name="button_platform_appearance">-->
+<!--        <item name="neuLightShadowColor">...</item>-->
+<!--        <item name="neuDarkShadowColor">...</item>-->
+<!--        <item name="neuFillStartColor">...</item>-->
+<!--        <item name="neuFillEndColor">...</item>-->
+<!--        <item name="neuFillPressedStartColor">...</item>-->
+<!--        <item name="neuFillPressedEndColor">...</item>-->
+<!--        <item name="neuBorderStartColor">...</item>-->
+<!--        <item name="neuBorderEndColor">...</item>-->
+<!--        <item name="neuBorderPressedStartColor">...</item>-->
+<!--        <item name="neuBorderPressedEndColor">...</item>-->
+<!--    </style>-->
+
+    <style name="neuWhiteDivider">
+        <item name="neuDividerStartColor">#FF212426</item>
+        <item name="neuDividerMiddleColor">#FF2e3234</item>
+        <item name="neuDividerEndColor">#FF212426</item>
     </style>
 
 </resources>

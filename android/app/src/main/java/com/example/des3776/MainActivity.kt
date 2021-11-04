@@ -16,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import club.cred.synth.views.SynthButton
 import com.bumptech.glide.Glide
 import com.example.des3776.databinding.ActivityMainBinding
 import com.google.gson.JsonObject
@@ -29,6 +30,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.math.log
 
 
 class MainActivity : AppCompatActivity() {
@@ -75,8 +77,13 @@ class MainActivity : AppCompatActivity() {
 
         /// imageview with animated gif
         val imageView: ImageView = findViewById(R.id.dna_imageview)
-        Glide.with(this).load(R.drawable.dna).into(imageView)
+        Glide.with(this).load(R.drawable.dna2).into(imageView)
 
+        val sendRequestBtn: SynthButton = findViewById(R.id.send_req_btn)
+        sendRequestBtn.text = "Select File and Send"
+        sendRequestBtn.setOnClickListener {
+            Log.d("MAIN", "pressed")
+        }
     }
 
     private fun setRecyclerView() {
