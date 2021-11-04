@@ -171,7 +171,7 @@ class HypertensionViewModel: ViewModel() {
 
 이제 View에서 출력을 해주면 된다. xml에서 viewModel로 사용할 데이터를 `.kt`와 Data Binding을 해주고 이를 listen 해줄 Observer를 만들어주었다. 
 
-[자세한 내용은 소스코드 참고](링크첨부)
+[자세한 내용은 소스코드 참고](https://github.com/seunghwanly/des3776-01-application/blob/main/android/app/src/main/res/layout/activity_main.xml)
 
 ## File upload
 Android는 다운로드폴더에서 직접적으로 파일을 업로드하는 것을 허용하지 않는다. 따라서 내장폴더에 있는 파일을 캐시폴더로 옮겨 주어야한다. 아래와 같이 데이터를 복사해주었다.
@@ -291,6 +291,10 @@ fun getEvaluationOfSelectedTestCase(view: View) {
         }
     }
 ```
+
+# Result
+
+<img width="467" alt="스크린샷 2021-10-08 오전 11 28 09" src="https://user-images.githubusercontent.com/22142225/136490159-cff58886-7c7b-4559-95cd-887d5e6471e3.png">
 
 
 # TODO
