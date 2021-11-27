@@ -23,7 +23,14 @@ class DisplayResultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val receivedData = this.intent.getSerializableExtra("receivedData") as ArrayList<Hypertension>
+        // get data from intent
+        val receivedData =
+            this.intent.getSerializableExtra("receivedData") as ArrayList<Hypertension>
+        val userName = this.intent.getStringExtra("userName")
+        val userAge = this.intent.getStringExtra("userAge")
+        val userDisease = this.intent.getStringExtra("userDisease")
+        val userMedication = this.intent.getStringExtra("userMedication")
+
         Log.d("receivedData", receivedData.toString())
         // Data binding
         binding = DataBindingUtil.setContentView(this, R.layout.activity_display_result)
@@ -42,6 +49,12 @@ class DisplayResultActivity : AppCompatActivity() {
         viewmodel.observableData.observe(this, dataObserver)
         setRecyclerView()
         viewmodel.observableData.postValue(receivedData)
+
+        // set textviews
+        binding.userNameTextView.text = userName
+        binding.userAgeTextView.text = userAge
+        binding.userDiseaseTextView.text = userDisease
+        binding.userMedicationTextView.text = userMedication
     }
 
 

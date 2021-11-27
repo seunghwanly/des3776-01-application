@@ -38,7 +38,7 @@
             app:neuBorderStartColor="@color/teal_200"
             app:neuBorderEndColor="@color/purple_500"
             app:neuPlatformColor="@color/synth_color"
-            android:onClick="@{activity::getEvaluationOfSelectedTestCase}"
+            android:onClick="@{activity::gotoNextScreen}"
             />
     </LinearLayout>
 </layout>

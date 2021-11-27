@@ -19,6 +19,27 @@
         android:background="@color/background"
         android:clipChildren="false">
 
+        <TextView
+            android:id="@+id/user_name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white" />
+        <TextView
+            android:id="@+id/user_age_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white" />
+        <TextView
+            android:id="@+id/user_disease_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white" />
+        <TextView
+            android:id="@+id/user_medication_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/geno_recyclerview"
             android:layout_width="match_parent"
