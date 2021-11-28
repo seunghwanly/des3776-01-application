@@ -89,11 +89,23 @@ class UserInputActivity : AppCompatActivity() {
         /// set listeners
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//                TODO("Not yet implemented")
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//                TODO("something")
+//                if (p0 == null)
+//                    return
+//                // 1. get cursor position : p0 = start + before
+//                val initialCursorPosition = start + before
+//                //2. get digit count after cursor position : c0
+//                val numOfDigitsToRightOfCursor = getNumberOfDigits(beforeText.substring(initialCursorPosition,
+//                    beforeText.length))
+//                val newAmount = formatAmount(p0.toString())
+//                editText.removeTextChangedListener(this)
+//                editText.setText(newAmount)
+//                //set new cursor position
+//                editText.setSelection(getNewCursorPosition(numOfDigitsToRightOfCursor, newAmount))
+//                editText.addTextChangedListener(this)
+
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -102,24 +114,28 @@ class UserInputActivity : AppCompatActivity() {
                         userNameInputText.text.hashCode() -> {
                             userNameInputText.removeTextChangedListener(this)
                             userNameInputText.text = s
+                            userNameInputText.setSelection(s.length)
                             userName = userNameInputText.text.toString()
                             userNameInputText.addTextChangedListener(this)
                         }
                         userAgeInputText.text.hashCode() -> {
                             userAgeInputText.removeTextChangedListener(this)
                             userAgeInputText.text = s
+                            userAgeInputText.setSelection(s.length)
                             userAge = userAgeInputText.text.toString()
                             userAgeInputText.addTextChangedListener(this)
                         }
                         userDiseaseInputText.text.hashCode() -> {
                             userDiseaseInputText.removeTextChangedListener(this)
                             userDiseaseInputText.text = s
+                            userDiseaseInputText.setSelection(s.length)
                             userDisease = userDiseaseInputText.text.toString()
                             userDiseaseInputText.addTextChangedListener(this)
                         }
                         userMedicationInputText.text.hashCode() -> {
                             userMedicationInputText.removeTextChangedListener(this)
                             userMedicationInputText.text = s
+                            userMedicationInputText.setSelection(s.length)
                             userMedication = userMedicationInputText.text.toString()
                             userMedicationInputText.addTextChangedListener(this)
                         }
